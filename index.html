@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Netflix Login</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="shortcut icon" href="./imagens/netflix-icon.jpg" type="image/x-icon">
+
+       
+    </head>
+   
+
+    <body>
+
+        
+        <div class="header">
+            <div class="logo">
+                <a href="#">
+                    <img src="imagens/netflixlogo.png" alt="">
+                </a>
+            </div>
+        </div>
+
+        <div class="login_body">
+            <h2>Entrar</h2>
+         
+            <form id="form-entrar" method="post" action="">
+                <div class="input_box">
+                    <input required name="contato" type="text" placeholder="Email ou número de telefone">
+                </div>
+                
+                <div class="input_box">
+                    <input required name="senha" type="password" placeholder="Senha">
+
+                </div>
+                 
+                <!-- Espaço para exibir mensagens de erro -->
+                <div id="mensagem"></div>
+            
+                <button type="submit">Entrar</button>
+            </form>
+
+            <div class="support">
+                <div class="remember">
+                    <span><input type="checkbox" style="margin: 0;padding: 0;height: 13px;"></span>
+                    <span>Lembre-se de mim</span>
+                </div>
+                <div class="help">  
+                    <a href="#">
+                        Precisa de ajuda?
+                    </a>
+                </div>
+            </div>
+
+            <div class="login_footer">
+                <div class="login_facebook">
+                    <span><img height="20px" src="imagens/Facebook_logo.png" alt="facebook"></span>
+                    <span><a href="https://www.facebook.com/netflix/">Conectar com Facebook</a></span>
+                </div>
+
+                <div class="sign_up">
+                    <p>Novo por aqui? <a href="registrar.html">Assine agora</a></p>
+                </div>
+
+                <div class="terms">
+                    <p>Esta página é protegida pelo Google reCAPTCHA para garantir que você não é um robô. <a href="#">Saiba mais</a></p>
+                </div>
+
+            </div>
+        </div>
+
+      
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                    $('#form-entrar').on('submit', function(event) {
+                        event.preventDefault(); // Impede o envio padrão do formulário
+                        $('#mensagem').text(''); // Limpa a mensagem anterior
+
+                        $.ajax({
+                            url: 'php/login.php', // URL do script PHP
+                            type: 'POST',
+                            data: $(this).serialize(), // Envia os dados do formulário
+                            dataType: 'json',
+                            success: function(response) {
+                               
+                                // Verifica se a resposta é um objeto JSON
+                                try {
+                                    
+                                    if (response.success) {
+                                        if(response.redirect){
+                                            window.location.href = 'pagina_inicial.php';
+                                            limparCampos()
+
+                                        }
+                                    } else if (response.mensagem) {
+                                        $('#mensagem').html('<span style="color: red;">' + response.mensagem + '</span>');
+                                        
+                                    }
+                                } catch (e) {
+                                    // Se não conseguir analisar a resposta, exibe um erro
+                                    $('#mensagem').text('Erro ao processar a resposta do servidor.');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                               
+                                $('#mensagem').text('Erro ao processar a sua solicitação.');
+                            }
+                        });
+                    });
+
+                    // Função para limpar os campos do formulário
+                    function limparCampos(){
+                        $('#form-entrar input[type="text"], #form-entrar input[type="password"]').val('');
+                    }
+                });
+
+        </script>
+        
+        
+    </body>
+</html>
